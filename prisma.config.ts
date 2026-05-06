@@ -3,10 +3,13 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
+const schema = process.env["PRISMA_SCHEMA"] ?? "prisma/schema.prisma";
+const isPostgresSchema = schema.startsWith("prisma-postgres/");
+
 export default defineConfig({
-  schema: "prisma/schema.prisma",
+  schema,
   migrations: {
-    path: "prisma/migrations",
+    path: isPostgresSchema ? "prisma-postgres/migrations" : "prisma/migrations",
   },
   datasource: {
     url: process.env["DATABASE_URL"],
