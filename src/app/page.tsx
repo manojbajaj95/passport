@@ -37,9 +37,9 @@ export default async function RegistryPage() {
                   Start Demo
                 </Button>
               </Link>
-              <Link href="/claim">
+              <Link href="/demo">
                 <Button size="lg" variant="outline" className="h-11 bg-white/75 px-4 text-base backdrop-blur">
-                  Claim Token
+                  Live Demo
                 </Button>
               </Link>
               <Link href="/registry">

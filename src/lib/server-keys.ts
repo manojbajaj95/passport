@@ -1,6 +1,6 @@
-import { generateKeyPair, exportJWK, importJWK, type KeyLike } from 'jose'
+import { generateKeyPair, exportJWK, importJWK } from 'jose'
 
-type ServerKeys = { privateKey: KeyLike; publicKeyJwk: JsonWebKey }
+type ServerKeys = { privateKey: CryptoKey; publicKeyJwk: JsonWebKey }
 
 let cached: ServerKeys | null = null
 
@@ -11,11 +11,11 @@ export async function getServerKeys(): Promise<ServerKeys> {
     const jwk = JSON.parse(
       Buffer.from(process.env.SERVER_PRIVATE_KEY, 'base64').toString('utf-8')
     )
-    const privateKey = await importJWK(jwk, 'EdDSA')
+    const privateKey = await importJWK(jwk, 'EdDSA') as CryptoKey
     const { d: _d, ...publicKeyJwk } = jwk
     cached = { privateKey, publicKeyJwk: { ...publicKeyJwk, key_ops: ['verify'] } }
   } else {
-    const { privateKey, publicKey } = await generateKeyPair('EdDSA')
+    const { privateKey, publicKey } = await generateKeyPair('EdDSA') as { privateKey: CryptoKey; publicKey: CryptoKey }
     const publicKeyJwk = await exportJWK(publicKey)
     cached = { privateKey, publicKeyJwk: { ...publicKeyJwk, alg: 'EdDSA', use: 'sig' } }
   }

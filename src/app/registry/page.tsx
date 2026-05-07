@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic'
 export default async function RegistryPage() {
   const passports = await prisma.passport.findMany({
     orderBy: { createdAt: 'desc' },
-    select: { id: true, name: true, status: true, createdAt: true, ownerEmail: true, description: true },
+    select: { did: true, handle: true, name: true, status: true, createdAt: true, ownerEmail: true, description: true },
   })
 
   const revoked = passports.filter((passport) => passport.status === 'REVOKED').length
@@ -69,18 +69,18 @@ export default async function RegistryPage() {
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             {passports.map((p) => (
-              <Link key={p.id} href={`/passport/${p.id}`} className="demo-panel group block p-5 transition-transform hover:-translate-y-0.5">
+              <Link key={p.did} href={`/passport/${p.handle}`} className="demo-panel group block p-5 transition-transform hover:-translate-y-0.5">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <div className="font-mono text-xs uppercase text-muted-foreground">Agent passport</div>
-                    <h2 className="mt-2 text-2xl font-semibold">{p.name ?? 'Unnamed agent'}</h2>
+                    <h2 className="mt-2 text-2xl font-semibold">{p.name ?? p.handle}</h2>
                     <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">
                       {p.description ?? 'No description registered.'}
                     </p>
                   </div>
                   <ArrowUpRight className="size-5 text-muted-foreground transition-colors group-hover:text-zinc-950" aria-hidden />
                 </div>
-                <div className="mt-5 code-tile text-xs">{p.id}</div>
+                <div className="mt-5 code-tile text-xs">{p.handle}</div>
                 <div className="mt-5 flex flex-wrap items-center gap-3">
                   <StatusBadge status={p.status} />
                   <span className="text-sm text-muted-foreground">{p.ownerEmail ? maskEmail(p.ownerEmail) : 'No owner'}</span>

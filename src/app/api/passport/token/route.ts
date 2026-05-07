@@ -61,12 +61,12 @@ async function verifyEd25519(
   try {
     const key = await crypto.subtle.importKey(
       'raw',
-      publicKey,
+      Buffer.from(publicKey),
       { name: 'Ed25519' },
       false,
       ['verify']
     )
-    return await crypto.subtle.verify({ name: 'Ed25519' }, key, signature, message)
+    return await crypto.subtle.verify({ name: 'Ed25519' }, key, Buffer.from(signature), Buffer.from(message))
   } catch {
     return false
   }
