@@ -8,25 +8,35 @@ datasource db {
 }
 
 model Passport {
-  id          String         @id
+  did         String         @id
+  handle      String         @unique
   publicKey   String
   status      PassportStatus @default(UNCLAIMED)
   ownerEmail  String?
   name        String?
   description String?
-  tags        Json?
   createdAt   DateTime       @default(now())
   claimedAt   DateTime?
   claimTokens ClaimToken[]
+  nonces      Nonce[]
 }
 
 model ClaimToken {
-  token      String    @id
-  passportId String
-  email      String
-  expiresAt  DateTime
-  usedAt     DateTime?
-  passport   Passport  @relation(fields: [passportId], references: [id])
+  token     String    @id
+  did       String
+  email     String
+  expiresAt DateTime
+  usedAt    DateTime?
+  passport  Passport  @relation(fields: [did], references: [did])
+}
+
+model Nonce {
+  id        String    @id @default(cuid())
+  did       String
+  nonce     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  passport  Passport  @relation(fields: [did], references: [did])
 }
 
 enum PassportStatus {
