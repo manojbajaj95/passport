@@ -1,7 +1,8 @@
 export type PassportStatus = 'UNCLAIMED' | 'CLAIMED' | 'REVOKED'
 
 export interface PassportSummary {
-  id: string
+  did: string
+  handle: string
   name: string | null
   status: PassportStatus
   createdAt: string
@@ -9,13 +10,13 @@ export interface PassportSummary {
 }
 
 export interface PassportDetail {
-  id: string
+  did: string
+  handle: string
   publicKey: string
   status: PassportStatus
   ownerEmail: string | null
   name: string | null
   description: string | null
-  tags: Record<string, string> | null
   createdAt: string
   claimedAt: string | null
 }

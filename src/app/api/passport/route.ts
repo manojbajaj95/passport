@@ -6,17 +6,12 @@ import type { PassportSummary } from '@/types/passport'
 export async function GET() {
   const passports = await prisma.passport.findMany({
     orderBy: { createdAt: 'desc' },
-    select: { id: true, name: true, status: true, createdAt: true, ownerEmail: true },
+    select: { did: true, handle: true, name: true, status: true, createdAt: true, ownerEmail: true },
   })
 
-  const result: PassportSummary[] = passports.map((p: {
-    id: string
-    name: string | null
-    status: string
-    createdAt: Date
-    ownerEmail: string | null
-  }) => ({
-    id: p.id,
+  const result: PassportSummary[] = passports.map((p) => ({
+    did: p.did,
+    handle: p.handle,
     name: p.name,
     status: p.status as PassportSummary['status'],
     createdAt: p.createdAt.toISOString(),

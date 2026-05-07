@@ -16,21 +16,19 @@ export async function POST(request: NextRequest) {
   })
 
   if (!claimToken) {
-    return NextResponse.json({ error: 'Invalid token' }, { status: 400 })
+    return NextResponse.json({ error: 'invalid_token' }, { status: 400 })
   }
-
   if (claimToken.usedAt) {
-    return NextResponse.json({ error: 'Token already used' }, { status: 400 })
+    return NextResponse.json({ error: 'token_already_used' }, { status: 400 })
   }
-
   if (claimToken.expiresAt < new Date()) {
-    return NextResponse.json({ error: 'Token expired' }, { status: 400 })
+    return NextResponse.json({ error: 'token_expired' }, { status: 400 })
   }
 
   const now = new Date()
   await prisma.$transaction([
     prisma.passport.update({
-      where: { id: claimToken.passportId },
+      where: { did: claimToken.did },
       data: { status: 'CLAIMED', claimedAt: now },
     }),
     prisma.claimToken.update({
@@ -39,5 +37,9 @@ export async function POST(request: NextRequest) {
     }),
   ])
 
-  return NextResponse.json({ passportId: claimToken.passportId, status: 'CLAIMED' })
+  return NextResponse.json({
+    did: claimToken.did,
+    handle: claimToken.passport.handle,
+    status: 'CLAIMED',
+  })
 }

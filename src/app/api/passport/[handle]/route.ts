@@ -5,23 +5,23 @@ import type { PassportDetail } from '@/types/passport'
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ handle: string }> }
 ) {
-  const { id } = await params
-  const passport = await prisma.passport.findUnique({ where: { id } })
+  const { handle } = await params
+  const passport = await prisma.passport.findUnique({ where: { handle } })
 
   if (!passport) {
-    return NextResponse.json({ error: 'Passport not found' }, { status: 404 })
+    return NextResponse.json({ error: 'passport_not_found' }, { status: 404 })
   }
 
   const result: PassportDetail = {
-    id: passport.id,
+    did: passport.did,
+    handle: passport.handle,
     publicKey: passport.publicKey,
     status: passport.status as PassportDetail['status'],
     ownerEmail: passport.ownerEmail ? maskEmail(passport.ownerEmail) : null,
     name: passport.name,
     description: passport.description,
-    tags: passport.tags as Record<string, string> | null,
     createdAt: passport.createdAt.toISOString(),
     claimedAt: passport.claimedAt?.toISOString() ?? null,
   }

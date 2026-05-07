@@ -2,49 +2,67 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { generateClaimToken, hashToken } from '@/lib/crypto'
 import { sendClaimEmail } from '@/lib/email'
+import { extractPublicKeyFromDid } from '@/lib/did'
+import { generateHandle } from '@/lib/handle'
 
 export async function POST(request: NextRequest) {
   const body = await request.json()
-  const { agentId, publicKey, ownerEmail, name, description, tags } = body
+  const { did, ownerEmail, name, description } = body
 
-  if (!agentId || !publicKey || !ownerEmail) {
-    return NextResponse.json(
-      { error: 'agentId, publicKey, and ownerEmail are required' },
-      { status: 400 }
-    )
+  if (!did) {
+    return NextResponse.json({ error: 'did is required' }, { status: 400 })
   }
 
-  const readableAgentId = /^agnt_[a-z]+-[a-z]+-[a-z]+$/
-  const legacyAgentId = /^agnt_[0-9a-f]{16}$/
-  if (!readableAgentId.test(agentId) && !legacyAgentId.test(agentId)) {
-    return NextResponse.json({ error: 'Invalid agentId format' }, { status: 400 })
+  let publicKeyBytes: Uint8Array
+  try {
+    publicKeyBytes = extractPublicKeyFromDid(did)
+  } catch {
+    return NextResponse.json({ error: 'invalid_did' }, { status: 400 })
   }
 
-  const existing = await prisma.passport.findUnique({ where: { id: agentId } })
+  const existing = await prisma.passport.findUnique({ where: { did } })
   if (existing) {
-    return NextResponse.json({ error: 'Agent ID already registered' }, { status: 409 })
+    return NextResponse.json({ error: 'did_already_registered' }, { status: 409 })
   }
 
-  const rawToken = generateClaimToken()
-  const tokenHash = hashToken(rawToken)
-  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
+  let handle: string | null = null
+  for (let i = 0; i < 10; i++) {
+    const candidate = generateHandle()
+    const taken = await prisma.passport.findUnique({ where: { handle: candidate } })
+    if (!taken) { handle = candidate; break }
+  }
+  if (!handle) {
+    return NextResponse.json({ error: 'Could not generate unique handle' }, { status: 500 })
+  }
 
-  await prisma.passport.create({
-    data: {
-      id: agentId,
-      publicKey,
-      ownerEmail,
-      name: name ?? null,
-      description: description ?? null,
-      tags: tags ?? null,
-      claimTokens: {
-        create: { token: tokenHash, email: ownerEmail, expiresAt },
-      },
-    },
+  const publicKey = Buffer.from(publicKeyBytes).toString('base64url')
+
+  const passport = await prisma.passport.create({
+    data: { did, handle, publicKey, ownerEmail: ownerEmail ?? null, name: name ?? null, description: description ?? null },
   })
 
-  const baseUrl = request.headers.get('origin') ?? 'http://localhost:3000'
-  await sendClaimEmail(ownerEmail, agentId, rawToken, baseUrl)
+  if (ownerEmail) {
+    const rawToken = generateClaimToken()
+    const tokenHash = hashToken(rawToken)
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
 
-  return NextResponse.json({ passportId: agentId, status: 'UNCLAIMED' }, { status: 201 })
+    await prisma.claimToken.create({
+      data: { token: tokenHash, did, email: ownerEmail, expiresAt },
+    })
+
+    const baseUrl = request.headers.get('origin') ?? 'http://localhost:3000'
+    await sendClaimEmail(ownerEmail, handle, rawToken, baseUrl)
+
+    if (process.env.NODE_ENV === 'development') {
+      return NextResponse.json(
+        { did: passport.did, handle: passport.handle, status: 'UNCLAIMED', _devClaimToken: rawToken },
+        { status: 201 }
+      )
+    }
+  }
+
+  return NextResponse.json(
+    { did: passport.did, handle: passport.handle, status: 'UNCLAIMED' },
+    { status: 201 }
+  )
 }
