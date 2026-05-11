@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { StatusBadge } from '@/components/status-badge'
+import { AgentPromptDialog } from '@/components/agent-prompt-dialog'
 import * as ed from '@noble/ed25519'
 import { base58 } from '@scure/base'
 
@@ -91,24 +92,41 @@ export function InitForm() {
 
   if (step === 'idle') {
     return (
-      <Card className="max-w-xl rounded-lg">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Sparkles className="size-4" aria-hidden />
-            Generate local identity
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground mb-4">
-            Generates an Ed25519 keypair locally and derives a DID from the public key.
-            The private key never leaves this page.
-          </p>
-          <Button onClick={handleInit} disabled={loading}>
-            <KeyRound className="size-4" aria-hidden />
-            {loading ? 'Generating...' : 'Init Agent'}
-          </Button>
-        </CardContent>
-      </Card>
+      <div className="grid gap-4 sm:grid-cols-2 max-w-2xl">
+        <Card className="rounded-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="size-4" aria-hidden />
+              Generate in browser
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground mb-4">
+              Generates an Ed25519 keypair locally and derives a DID from the public key.
+              The private key never leaves this page.
+            </p>
+            <Button onClick={handleInit} disabled={loading}>
+              <KeyRound className="size-4" aria-hidden />
+              {loading ? 'Generating...' : 'Init Agent'}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-lg border-dashed">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-zinc-600">
+              <span className="text-base">🤖</span>
+              Let your agent register
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground mb-4">
+              Copy a ready-made prompt and paste it into your agent. It will read <code className="font-mono text-xs bg-muted px-1 rounded">SKILLS.md</code>, generate its own keypair, and register itself.
+            </p>
+            <AgentPromptDialog />
+          </CardContent>
+        </Card>
+      </div>
     )
   }
 
