@@ -121,9 +121,12 @@ export function InitForm() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground mb-4">
-              Copy a ready-made prompt and paste it into your agent. It will read <code className="font-mono text-xs bg-muted px-1 rounded">SKILLS.md</code>, generate its own keypair, and register itself.
+              Copy this prompt and paste it to your agent to let it securely self-register.
             </p>
-            <AgentPromptDialog />
+            <div className="rounded border bg-zinc-50 p-4 font-mono text-sm dark:bg-zinc-950/50">
+              <p className="mb-2">Read <a href="https://passport.agentr.dev/SKILL.md" target="_blank" className="underline hover:text-blue-500">https://passport.agentr.dev/SKILL.md</a> and generate an Agent Passport.</p>
+              <p className="text-muted-foreground italic"># Optional: I want my agent handle to be "my-cool-agent"</p>
+            </div>
           </CardContent>
         </Card>
       </div>

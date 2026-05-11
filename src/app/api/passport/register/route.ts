@@ -7,13 +7,13 @@ import { generateHandle } from '@/lib/handle'
 
 export async function POST(request: NextRequest) {
   const body = await request.json()
-  const { did, ownerEmail, name, description } = body
+  const { did, ownerEmail, name, description, handle: requestedHandle } = body
 
   if (!did) {
     return NextResponse.json({ error: 'did is required' }, { status: 400 })
   }
 
-  let publicKeyBytes: Uint8Array
+  let publicKeyBytes: **********
   try {
     publicKeyBytes = extractPublicKeyFromDid(did)
   } catch {
@@ -26,13 +26,27 @@ export async function POST(request: NextRequest) {
   }
 
   let handle: string | null = null
-  for (let i = 0; i < 10; i++) {
-    const candidate = generateHandle()
-    const taken = await prisma.passport.findUnique({ where: { handle: candidate } })
-    if (!taken) { handle = candidate; break }
+
+  if (requestedHandle) {
+    const cleanHandle = requestedHandle.toLowerCase().replace(/[^a-z0-9-]/g, '')
+    if (!cleanHandle) {
+       return NextResponse.json({ error: 'invalid_handle' }, { status: 400 })
+    }
+    const taken = await prisma.passport.findUnique({ where: { handle: cleanHandle } })
+    if (taken) {
+      return NextResponse.json({ error: 'handle_already_taken' }, { status: 409 })
+    }
+    handle = cleanHandle
+  } else {
+    for (let i = 0; i < 10; i++) {
+      const candidate = generateHandle()
+      const taken = await prisma.passport.findUnique({ where: { handle: candidate } })
+      if (!taken) { handle = candidate; break }
+    }
   }
+
   if (!handle) {
-    return NextResponse.json({ error: 'Could not generate unique handle' }, { status: 500 })
+    return NextResponse.json({ error: 'Could not assign a unique handle' }, { status: 500 })
   }
 
   const publicKey = Buffer.from(publicKeyBytes).toString('base64url')

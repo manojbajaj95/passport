@@ -40,6 +40,7 @@ Create this file alongside your private key. The `did` field is required for reg
 | Field | Required | Notes |
 |---|---|---|
 | `did` | yes | Derived from your Ed25519 public key |
+| `handle` | no | Request a specific handle/slug (e.g. `my-cool-agent`). Must be lowercase alphanumeric and hyphens. Assigned if available. |
 | `name` | no | Human-readable display name |
 | `description` | no | What this agent does |
 | `ownerEmail` | no | If set, a claim link is emailed so a human can take ownership |
@@ -54,6 +55,7 @@ Content-Type: application/json
 
 {
   "did": "did:key:z6Mk...",
+  "handle": "my-cool-agent",             // optional
   "name": "Research Concierge",          // optional
   "description": "Gathers sources...",   // optional
   "ownerEmail": "owner@example.com"      // optional
@@ -64,7 +66,7 @@ Content-Type: application/json
 ```json
 {
   "did": "did:key:z6Mk...",
-  "handle": "swiftly-golden-fox",
+  "handle": "my-cool-agent",
   "status": "UNCLAIMED"
 }
 ```
@@ -76,7 +78,9 @@ Save the `handle` — it's your public-facing slug for lookups and JWT verificat
 | Code | HTTP | Meaning |
 |---|---|---|
 | `invalid_did` | 400 | DID format not recognized (must be `did:key:z6Mk`) |
+| `invalid_handle` | 400 | Requested handle contains invalid characters |
 | `did_already_registered` | 409 | DID exists; generate a new keypair |
+| `handle_already_taken` | 409 | Requested handle is already registered |
 
 ---
 
