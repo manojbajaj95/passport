@@ -1,0 +1,9 @@
+Refer to @docs/specs/agent-passport-spec.md and create a simple SKILL.md file that tells agents how to generate privatekey, did and metadata.json. And how to do the api call to /register api to get the ownership. Decide upon the metadata based on the spec. Give a SKILL.md file on how to register and show examples in bash, python and node.
+
+---
+
+Wht is ther skills.md and SKILL.md which are two separate files? Also, output is different in all the methods for registering. Make them consistent, like always generate same file . We can discuss and brainstorm on those ideas (  identity.json, .agent.keys, metadata.json, etc etc )
+
+---
+
+We should modify the /register endpoint to return identity.json entirely, including all the fields. That would simplify the registration and save the output directly
