@@ -1,0 +1,17 @@
+Here is the resend env key: REDACTED add it and sync with resend as well. Ensure that the claim flow is working as well.
+
+---
+
+Add only in main
+
+---
+
+Improve the html template too
+
+---
+
+Send from manoj@agentr.dev.
+
+---
+
+Also, in new agent show a dialog with simple instructions for agents to copy a prompt to register. Something imforming human to copy paste the prompt and give it to their agent to register. Give details for agent in the prompt and especially ask to read SKILLS.md file.
