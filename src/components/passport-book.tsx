@@ -19,6 +19,44 @@ interface PassportBookProps {
   machineLine: string
 }
 
+function GuillocheBackground() {
+  return (
+    <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.03] mix-blend-multiply text-zinc-900" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="guilloche" width="100" height="100" patternUnits="userSpaceOnUse" patternTransform="scale(0.8)">
+          <path d="M 0 50 Q 25 0 50 50 T 100 50" fill="none" stroke="currentColor" strokeWidth="1" />
+          <path d="M 0 50 Q 25 100 50 50 T 100 50" fill="none" stroke="currentColor" strokeWidth="1" />
+          <path d="M 50 0 Q 100 25 50 50 T 50 100" fill="none" stroke="currentColor" strokeWidth="1" />
+          <path d="M 50 0 Q 0 25 50 50 T 50 100" fill="none" stroke="currentColor" strokeWidth="1" />
+          <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" strokeWidth="0.5" />
+          <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4 4" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#guilloche)" />
+    </svg>
+  )
+}
+
+function PassportStamp({ date, color, text, angle, className, sysOk = true }: { date: string, color: 'red' | 'blue' | 'green', text: string, angle: number, className?: string, sysOk?: boolean }) {
+  const colors = {
+    red: "border-red-600/60 text-red-600/60",
+    blue: "border-blue-600/60 text-blue-600/60",
+    green: "border-emerald-600/60 text-emerald-600/60"
+  }
+  return (
+    <div className={`pointer-events-none absolute mix-blend-multiply ${className}`} style={{ transform: `rotate(${angle}deg)` }}>
+      <div className={`flex size-28 items-center justify-center rounded-full border-[3px] border-double ${colors[color]}`}>
+        <div className="absolute inset-1.5 rounded-full border border-dashed opacity-40" />
+        <div className="text-center font-mono font-bold uppercase tracking-widest">
+          <div className="text-[10px] opacity-90">{text}</div>
+          <div className="my-1 border-y border-current py-1 text-[11px]">{date}</div>
+          {sysOk && <div className="text-[8px] opacity-90">SYS // OK</div>}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function PassportBook({
   id,
   name,
@@ -92,8 +130,14 @@ export function PassportBook({
           </motion.button>
 
           <div className={`grid w-full max-w-6xl gap-0 transition-all duration-700 lg:grid-cols-2 ${open ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
-            <section className="min-h-[530px] rounded-t-xl border border-zinc-300 bg-[linear-gradient(180deg,#fff7ed,#fffaf0_48%,#f8fafc)] p-7 text-zinc-950 shadow-[inset_-18px_0_34px_rgba(15,23,42,0.08)] lg:rounded-l-xl lg:rounded-r-none lg:border-r-0">
-              <div className="flex items-start justify-between gap-4 border-b border-zinc-300 pb-5">
+            <section className="relative overflow-hidden min-h-[530px] rounded-t-xl border border-zinc-300 bg-[linear-gradient(180deg,#fff7ed,#fffaf0_48%,#f8fafc)] p-7 text-zinc-950 shadow-[inset_-18px_0_34px_rgba(15,23,42,0.08)] lg:rounded-l-xl lg:rounded-r-none lg:border-r-0">
+              <GuillocheBackground />
+              
+              <div className="absolute -bottom-24 -left-24 opacity-[0.03] pointer-events-none">
+                <Fingerprint className="size-[400px]" aria-hidden />
+              </div>
+
+              <div className="relative flex items-start justify-between gap-4 border-b border-zinc-300/50 pb-5">
                 <div>
                   <p className="font-mono text-xs uppercase text-zinc-500">Passport holder</p>
                   <h2 className="mt-2 text-4xl font-semibold tracking-tight">{name}</h2>
@@ -102,8 +146,9 @@ export function PassportBook({
                 <StatusBadge status={status} />
               </div>
 
-              <div className="mt-7 grid gap-5 sm:grid-cols-[150px_1fr]">
-                <div className="flex aspect-[3/4] items-center justify-center rounded-md border border-zinc-300 bg-[linear-gradient(145deg,#0f172a,#115e59)] shadow-inner">
+              <div className="relative mt-7 grid gap-5 sm:grid-cols-[150px_1fr]">
+                <div className="relative overflow-hidden flex aspect-[3/4] items-center justify-center rounded-md border border-zinc-300 bg-[linear-gradient(145deg,#0f172a,#115e59)] shadow-inner">
+                  <div className="absolute inset-0 bg-[linear-gradient(105deg,transparent_20%,rgba(255,255,255,0.4)_25%,transparent_30%)] mix-blend-overlay" />
                   <Fingerprint className="size-16 text-teal-100" aria-hidden />
                 </div>
                 <div className="grid gap-4">
@@ -116,7 +161,7 @@ export function PassportBook({
                 </div>
               </div>
 
-              <div className="mt-8 rounded-md border border-zinc-300 bg-white/82 p-4">
+              <div className="relative mt-8 rounded-md border border-zinc-300/60 bg-white/70 p-4 backdrop-blur-sm">
                 <div className="flex items-center gap-2 font-mono text-[10px] uppercase text-zinc-500">
                   <BadgeCheck className="size-3.5" aria-hidden />
                   Verification note
@@ -127,19 +172,23 @@ export function PassportBook({
               </div>
             </section>
 
-            <section className="flex min-h-[530px] flex-col rounded-b-xl border border-zinc-300 bg-[linear-gradient(180deg,#f8fafc,#ecfeff)] p-7 text-zinc-950 shadow-[inset_18px_0_34px_rgba(15,23,42,0.08)] lg:rounded-l-none lg:rounded-r-xl">
-              <div className="flex items-center justify-between border-b border-zinc-300 pb-5">
+            <section className="relative overflow-hidden flex min-h-[530px] flex-col rounded-b-xl border border-zinc-300 bg-[linear-gradient(180deg,#f8fafc,#ecfeff)] p-7 text-zinc-950 shadow-[inset_18px_0_34px_rgba(15,23,42,0.08)] lg:rounded-l-none lg:rounded-r-xl">
+              <GuillocheBackground />
+              <PassportStamp date={issued} color="blue" text="ISSUED" angle={-15} className="top-12 right-10" />
+              <PassportStamp date="VERIFIED" color="green" text="ENTRY" angle={22} className="top-48 right-20" sysOk={false} />
+
+              <div className="relative flex items-center justify-between border-b border-zinc-300/50 pb-5">
                 <div>
                   <p className="font-mono text-xs uppercase text-zinc-500">Cryptographic page</p>
                   <h2 className="mt-2 text-3xl font-semibold tracking-tight">Public credentials</h2>
                 </div>
-                <div className="rounded-md border border-zinc-300 bg-white px-3 py-2 text-center shadow-sm">
+                <div className="rounded-md border border-zinc-300/80 bg-white/90 px-3 py-2 text-center shadow-sm backdrop-blur-sm">
                   <div className="font-mono text-[10px] uppercase text-zinc-500">Type</div>
                   <div className="text-2xl font-semibold">AI</div>
                 </div>
               </div>
 
-              <div className="mt-7 rounded-md border border-zinc-300 bg-white p-4">
+              <div className="relative mt-7 rounded-md border border-zinc-300/60 bg-white/70 p-4 backdrop-blur-sm">
                 <div className="flex items-center gap-2 font-mono text-[10px] uppercase text-zinc-500">
                   <KeyRound className="size-3.5" aria-hidden />
                   Public key
@@ -147,20 +196,20 @@ export function PassportBook({
                 <div className="mt-3 break-all font-mono text-xs leading-5 text-zinc-700">{publicKey}</div>
               </div>
 
-              <div className="mt-7 grid grid-cols-2 gap-4">
-                <div className="rounded-md border border-zinc-300 bg-white/78 p-4">
+              <div className="relative mt-7 grid grid-cols-2 gap-4">
+                <div className="rounded-md border border-zinc-300/60 bg-white/70 p-4 backdrop-blur-sm">
                   <p className="font-mono text-[10px] uppercase text-zinc-500">Issuer</p>
                   <p className="mt-2 text-lg font-semibold">Agent Passport Authority</p>
                 </div>
-                <div className="rounded-md border border-zinc-300 bg-white/78 p-4">
+                <div className="rounded-md border border-zinc-300/60 bg-white/70 p-4 backdrop-blur-sm">
                   <p className="font-mono text-[10px] uppercase text-zinc-500">Document</p>
                   <p className="mt-2 text-lg font-semibold">Verified agent</p>
                 </div>
               </div>
 
-              <div className="mt-auto border-t border-zinc-300 pt-5 font-mono text-sm leading-7 text-zinc-700">
-                <div>{machineLine.slice(0, 44).padEnd(44, '<')}</div>
-                <div>{machineLine.slice(44, 88).padEnd(44, '<')}</div>
+              <div className="relative mt-auto -mx-7 -mb-7 border-t border-zinc-300/60 bg-[linear-gradient(180deg,rgba(244,244,245,0.4),rgba(228,228,231,0.6))] p-5 pt-4 font-mono text-[15px] font-bold tracking-[0.18em] leading-loose text-zinc-800 mix-blend-multiply sm:text-[16px]">
+                <div className="whitespace-nowrap">{machineLine.slice(0, 44).padEnd(44, '<')}</div>
+                <div className="whitespace-nowrap">{machineLine.slice(44, 88).padEnd(44, '<')}</div>
               </div>
             </section>
           </div>

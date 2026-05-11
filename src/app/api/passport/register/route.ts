@@ -41,6 +41,16 @@ export async function POST(request: NextRequest) {
     data: { did, handle, publicKey, ownerEmail: ownerEmail ?? null, name: name ?? null, description: description ?? null },
   })
 
+  const responseBody: Record<string, unknown> = {
+    did: passport.did,
+    handle: passport.handle,
+    name: passport.name,
+    description: passport.description,
+    ownerEmail: passport.ownerEmail,
+    status: passport.status,
+    createdAt: passport.createdAt,
+  }
+
   if (ownerEmail) {
     const rawToken = generateClaimToken()
     const tokenHash = hashToken(rawToken)
@@ -54,15 +64,9 @@ export async function POST(request: NextRequest) {
     await sendClaimEmail(ownerEmail, handle, rawToken, baseUrl)
 
     if (process.env.NODE_ENV === 'development') {
-      return NextResponse.json(
-        { did: passport.did, handle: passport.handle, status: 'UNCLAIMED', _devClaimToken: rawToken },
-        { status: 201 }
-      )
+      responseBody._devClaimToken = rawToken
     }
   }
 
-  return NextResponse.json(
-    { did: passport.did, handle: passport.handle, status: 'UNCLAIMED' },
-    { status: 201 }
-  )
+  return NextResponse.json(responseBody, { status: 201 })
 }
