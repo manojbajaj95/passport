@@ -1,0 +1,9 @@
+Here is the resend env key: REDACTED add it and sync with resend as well. Ensure that the claim flow is working as well.
+
+---
+
+Add only in main
+
+---
+
+Improve the html template too
