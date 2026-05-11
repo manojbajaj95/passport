@@ -1,0 +1,33 @@
+{
+  "cli_version": "0.6.1",
+  "checkpoint_id": "cd4140a9d53d",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "docs/specs/agent-passport-spec.md",
+    "prisma/migrations/20260511120000_add_passport_id/migration.sql",
+    "prisma/schema.prisma",
+    "src/app/api/passport/[handle]/did-document/route.ts",
+    "src/app/api/passport/token/route.ts",
+    "src/lib/__tests__/jwt.test.ts",
+    "src/lib/did.ts",
+    "src/lib/jwt.ts",
+    "src/types/passport.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/cd/4140a9d53d/0/metadata.json",
+      "transcript": "/cd/4140a9d53d/0/full.jsonl",
+      "content_hash": "/cd/4140a9d53d/0/content_hash.txt",
+      "prompt": "/cd/4140a9d53d/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 59,
+    "cache_creation_tokens": 183331,
+    "cache_read_tokens": 3403268,
+    "output_tokens": 33995,
+    "api_call_count": 42
+  }
+}

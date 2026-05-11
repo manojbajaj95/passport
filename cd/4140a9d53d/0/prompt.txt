@@ -1,0 +1,17 @@
+Refer to this and help me improve the spec. Also refer to spec in @docs/specs/agent-auth-landscape.md . Focus only on identity part and not on any of the authentication / authorization policies  capabilities part
+
+---
+
+Also, review https://dotenvx.com/dotenvx.pdf
+
+---
+
+My assumption is all of these are security measures about key storage, which is vault's property not the identity layer. Even the rotation etc is not identity servers propery.
+
+---
+
+We are focussed on identity.
+
+---
+
+I like 1, 7 and 8 for now. Lets fix those in spec. Document the drawbacks somehwere and continue. Then do the code chanegs as well
