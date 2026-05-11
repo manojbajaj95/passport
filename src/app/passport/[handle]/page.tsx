@@ -1,10 +1,9 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, CalendarClock, Mail } from 'lucide-react'
+import { ArrowLeft, CalendarClock, Mail, Key } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { maskEmail } from '@/lib/mask'
 import { PassportBook } from '@/components/passport-book'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,61 +32,69 @@ export default async function PassportPage({
   const machineLine = `${passport.handle.replace(/-/g, '<').toUpperCase()}<<${displayName.replace(/[^a-zA-Z0-9]/g, '<').toUpperCase()}`
 
   return (
-    <div className="space-y-8">
-      <Link href="/" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="size-4" aria-hidden />
-        Registry
-      </Link>
+    <div className="w-full bg-background min-h-screen">
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-12">
+        <Link href="/" className="inline-flex items-center gap-2 text-label-uppercase text-body hover:text-foreground transition-colors mb-8">
+          <ArrowLeft className="size-4" aria-hidden />
+          REGISTRY
+        </Link>
 
-      <section className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
-        <PassportBook
-          id={passport.handle}
-          name={displayName}
-          description={description}
-          publicKey={passport.publicKey}
-          ownerEmail={ownerEmail}
-          status={passport.status}
-          issued={issued}
-          expires={expires}
-          machineLine={machineLine}
-        />
+        <div className="flex flex-col gap-12">
+          {/* Full Width Passport Section */}
+          <section className="w-full">
+            <PassportBook
+              id={passport.handle}
+              name={displayName}
+              description={description}
+              publicKey={passport.publicKey}
+              ownerEmail={ownerEmail}
+              status={passport.status}
+              issued={issued}
+              expires={expires}
+              machineLine={machineLine}
+            />
+          </section>
 
-        <aside className="space-y-4 lg:sticky lg:top-24">
-          <Card className="demo-panel">
-            <CardHeader><CardTitle>Ownership</CardTitle></CardHeader>
-            <CardContent className="space-y-4 text-sm">
-              <div className="flex items-start gap-3">
-                <Mail className="mt-0.5 size-4 text-muted-foreground" aria-hidden />
-                <div>
-                  <div className="text-muted-foreground">Owner</div>
-                  <div className="font-medium">{ownerEmail}</div>
+          {/* Metadata Section Below */}
+          <section className="grid gap-8 md:grid-cols-2">
+            <div className="border border-hairline bg-surface-card p-8">
+              <h2 className="text-title-lg text-foreground uppercase mb-8">OWNERSHIP DETAILS</h2>
+              <div className="grid sm:grid-cols-3 gap-8">
+                <div className="flex flex-col gap-2">
+                  <div className="text-label-uppercase text-body flex items-center gap-2">
+                    <Mail className="size-4" aria-hidden /> OWNER
+                  </div>
+                  <div className="text-body-md text-foreground">{ownerEmail}</div>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <div className="text-label-uppercase text-body flex items-center gap-2">
+                    <CalendarClock className="size-4" aria-hidden /> REGISTERED
+                  </div>
+                  <div className="text-body-md text-foreground">{formatDate(passport.createdAt)}</div>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <div className="text-label-uppercase text-body flex items-center gap-2">
+                    <CalendarClock className="size-4" aria-hidden /> CLAIMED
+                  </div>
+                  <div className="text-body-md text-foreground">{formatDate(passport.claimedAt)}</div>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <CalendarClock className="mt-0.5 size-4 text-muted-foreground" aria-hidden />
-                <div>
-                  <div className="text-muted-foreground">Registered</div>
-                  <div className="font-medium">{formatDate(passport.createdAt)}</div>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <CalendarClock className="mt-0.5 size-4 text-muted-foreground" aria-hidden />
-                <div>
-                  <div className="text-muted-foreground">Claimed</div>
-                  <div className="font-medium">{formatDate(passport.claimedAt)}</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          <Card className="demo-panel">
-            <CardHeader><CardTitle>DID</CardTitle></CardHeader>
-            <CardContent>
-              <p className="font-mono text-xs break-all text-muted-foreground">{passport.did}</p>
-            </CardContent>
-          </Card>
-        </aside>
-      </section>
+            <div className="border border-hairline bg-surface-card p-8">
+              <h2 className="text-title-lg text-foreground uppercase mb-8">CRYPTOGRAPHIC IDENTITY</h2>
+              <div className="flex flex-col gap-2">
+                <div className="text-label-uppercase text-body flex items-center gap-2">
+                  <Key className="size-4" aria-hidden /> DECENTRALIZED IDENTIFIER (DID)
+                </div>
+                <div className="font-mono text-sm break-all text-body bg-background border border-hairline p-4 select-all">
+                  {passport.did}
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
     </div>
   )
 }

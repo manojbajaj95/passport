@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Fingerprint, KeyRound } from 'lucide-react'
+import { Fingerprint, KeyRound, ChevronRight } from 'lucide-react'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -10,31 +10,31 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body>
-        <nav className="sticky top-0 z-20 border-b border-zinc-200/80 bg-[oklch(0.982_0.011_83.7/0.88)] backdrop-blur-xl">
-          <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-            <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
-              <span className="flex size-8 items-center justify-center rounded-md bg-zinc-950 text-white shadow-sm">
-                <Fingerprint className="size-4" aria-hidden />
+        <nav className="sticky top-0 z-20 bg-background border-b border-border h-16 flex items-center justify-center">
+          <div className="w-full max-w-[1440px] px-6 lg:px-12 flex items-center justify-between">
+            <Link href="/" className="flex items-center gap-3 font-bmw-display font-bold uppercase tracking-tight text-foreground text-xl">
+              <span className="flex items-center justify-center bg-foreground text-background p-1.5 border border-transparent">
+                <Fingerprint className="size-5" aria-hidden />
               </span>
-              <span>Agent Passport</span>
+              <span>AGENT PASSPORT</span>
             </Link>
-            <div className="flex items-center gap-2">
-              <Link href="/registry" className="hidden rounded-md px-3 py-1.5 text-sm font-medium text-zinc-600 transition-colors hover:bg-white/70 hover:text-zinc-950 sm:inline-flex">
+            <div className="flex items-center gap-6">
+              <Link href="/registry" className="hidden text-[14px] font-bmw-display font-bold tracking-[1.5px] uppercase text-foreground transition-colors sm:inline-flex">
                 Registry
               </Link>
-              <Link href="/claim" className="hidden rounded-md px-3 py-1.5 text-sm font-medium text-zinc-600 transition-colors hover:bg-white/70 hover:text-zinc-950 sm:inline-flex">
+              <Link href="/claim" className="hidden text-[14px] font-bmw-display font-bold tracking-[1.5px] uppercase text-foreground transition-colors sm:inline-flex">
                 Claim
               </Link>
-              <Link href="/init" className="inline-flex items-center gap-2 rounded-md border border-zinc-900 bg-zinc-950 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-zinc-800">
-                <KeyRound className="size-3.5" aria-hidden />
-                New Agent
+              <Link href="/get-started" className="inline-flex items-center justify-center h-12 px-8 text-[14px] font-bmw-display font-bold tracking-[1.5px] uppercase text-on-dark bg-background border border-border hover:bg-surface-elevated transition-colors rounded-none">
+                <KeyRound className="size-4 mr-2" aria-hidden />
+                GET STARTED
               </Link>
             </div>
           </div>
         </nav>
-        <main className="mx-auto max-w-6xl px-4 py-8">{children}</main>
+        <main className="w-full flex flex-col">{children}</main>
       </body>
     </html>
   )

@@ -10,45 +10,43 @@ export default async function ClaimPage({
   const { token } = await searchParams
 
   return (
-    <div className="space-y-8">
-      <Link href="/" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-teal-700 transition-colors">
-        <ArrowLeft className="size-4" aria-hidden />
-        Registry
-      </Link>
-      <section className="grid gap-6 lg:grid-cols-[1fr_420px] lg:items-start">
-        <div className="demo-panel relative overflow-hidden p-8 sm:p-10 border border-teal-100 bg-[linear-gradient(135deg,#f0fdfa,#ffffff)] shadow-sm rounded-2xl">
-          {/* Decorative pattern */}
-          <div className="pointer-events-none absolute inset-0 opacity-[0.03] mix-blend-multiply">
-            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <pattern id="bg-pattern-claim" width="100" height="100" patternUnits="userSpaceOnUse" patternTransform="scale(1.2)">
-                  <path d="M0 50 Q 25 0 50 50 T 100 50 M0 50 Q 25 100 50 50 T 100 50" fill="none" stroke="currentColor" strokeWidth="0.5"/>
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#bg-pattern-claim)"/>
-            </svg>
-          </div>
+    <div className="w-full bg-background min-h-screen">
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-12 py-12">
+        <Link href="/" className="inline-flex items-center gap-2 text-label-uppercase text-body hover:text-foreground transition-colors mb-8">
+          <ArrowLeft className="size-4" aria-hidden />
+          BACK TO HOME
+        </Link>
+        
+        <section className="grid gap-8 lg:grid-cols-[1fr_420px] lg:items-start">
+          <div className="relative overflow-hidden p-8 sm:p-12 border border-hairline bg-surface-card flex flex-col justify-between h-full">
+            {/* M stripe border at the top of the card */}
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-m-blue-light via-m-blue-dark to-m-red" />
 
-          <div className="relative z-10">
-            <p className="font-mono text-xs font-semibold tracking-widest uppercase text-teal-700">Ownership verification</p>
-            <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl text-zinc-900 drop-shadow-sm">Claim an agent passport.</h1>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-600">
-              Paste the claim token or open the magic link from the server log. The passport changes from pending to claimed.
-            </p>
-            <div className="mt-8 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-xl border border-teal-100 bg-white/80 p-4 shadow-sm backdrop-blur transition-shadow hover:shadow-md">
-                <MailCheck className="size-5 text-amber-600" aria-hidden />
-                <p className="mt-3 text-sm font-medium text-zinc-900">Token proves inbox access</p>
+            <div className="relative z-10 mb-12">
+              <p className="text-label-uppercase tracking-[1.5px] text-m-blue-light mb-4">OWNERSHIP VERIFICATION</p>
+              <h1 className="text-display-lg font-bmw-display uppercase text-foreground leading-[1.05]">
+                CLAIM AN AGENT <br />PASSPORT.
+              </h1>
+              <p className="mt-6 text-body-md text-body font-light max-w-xl">
+                Paste the claim token or open the magic link from your email. The passport changes from pending to claimed instantly.
+              </p>
+            </div>
+            
+            <div className="relative z-10 mt-auto grid gap-4 sm:grid-cols-2">
+              <div className="border border-hairline bg-background p-6 transition-colors hover:border-hairline-strong">
+                <MailCheck className="size-6 text-m-blue-dark mb-4" aria-hidden />
+                <p className="text-title-sm text-foreground uppercase">TOKEN PROVES INBOX ACCESS</p>
               </div>
-              <div className="rounded-xl border border-teal-100 bg-white/80 p-4 shadow-sm backdrop-blur transition-shadow hover:shadow-md">
-                <BadgeCheck className="size-5 text-teal-600" aria-hidden />
-                <p className="mt-3 text-sm font-medium text-zinc-900">Registry status updates live</p>
+              <div className="border border-hairline bg-background p-6 transition-colors hover:border-hairline-strong">
+                <BadgeCheck className="size-6 text-success mb-4" aria-hidden />
+                <p className="text-title-sm text-foreground uppercase">REGISTRY STATUS UPDATES LIVE</p>
               </div>
             </div>
           </div>
-        </div>
-        <ClaimForm initialToken={token ?? ''} />
-      </section>
+          
+          <ClaimForm initialToken={token ?? ''} />
+        </section>
+      </div>
     </div>
   )
 }
