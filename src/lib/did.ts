@@ -2,6 +2,41 @@ import { base58 } from '@scure/base'
 
 const ED25519_PREFIX = new Uint8Array([0xed, 0x01])
 
+export interface DidDocument {
+  '@context': string[]
+  id: string
+  verificationMethod: Array<{
+    id: string
+    type: string
+    controller: string
+    publicKeyMultibase: string
+  }>
+  authentication: string[]
+  assertionMethod: string[]
+}
+
+export function buildDidDocument(did: string): DidDocument {
+  const keyId = `${did}#${did.slice('did:key:'.length)}`
+  const publicKeyMultibase = did.slice('did:key:'.length)
+  return {
+    '@context': [
+      'https://www.w3.org/ns/did/v1',
+      'https://w3id.org/security/suites/ed25519-2020/v1',
+    ],
+    id: did,
+    verificationMethod: [
+      {
+        id: keyId,
+        type: 'Ed25519VerificationKey2020',
+        controller: did,
+        publicKeyMultibase,
+      },
+    ],
+    authentication: [keyId],
+    assertionMethod: [keyId],
+  }
+}
+
 export function extractPublicKeyFromDid(did: string): Uint8Array {
   if (!did.startsWith('did:key:z')) {
     throw new Error('Only did:key with base58btc encoding (z prefix) is supported')

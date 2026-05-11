@@ -20,3 +20,13 @@ export interface PassportDetail {
   createdAt: string
   claimedAt: string | null
 }
+
+export interface PassportTokenClaims {
+  sub: string        // DID — current verification credential
+  handle: string     // stable identity anchor
+  status: PassportStatus
+  name: string | null
+  iat: number
+  exp: number
+  jti: string
+}

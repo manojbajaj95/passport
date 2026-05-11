@@ -8,8 +8,9 @@ datasource db {
 }
 
 model Passport {
-  did         String         @id
+  id          String         @id @default(cuid())
   handle      String         @unique
+  did         String         @unique
   publicKey   String
   status      PassportStatus @default(UNCLAIMED)
   ownerEmail  String?

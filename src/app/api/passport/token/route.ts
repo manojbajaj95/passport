@@ -47,7 +47,8 @@ export async function POST(request: NextRequest) {
   const { token, expiresAt } = await signPassportToken(
     did,
     passport.handle,
-    passport.status === 'CLAIMED'
+    passport.status,
+    passport.name
   )
 
   return NextResponse.json({ token, expiresAt })

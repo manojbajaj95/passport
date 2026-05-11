@@ -6,7 +6,8 @@ const TOKEN_TTL_SECONDS = 3600
 
 export interface PassportTokenPayload extends JWTPayload {
   handle: string
-  claimed: boolean
+  status: string
+  name: string | null
 }
 
 function getIssuer(): string {
@@ -16,13 +17,14 @@ function getIssuer(): string {
 export async function signPassportToken(
   did: string,
   handle: string,
-  claimed: boolean
+  status: string,
+  name: string | null
 ): Promise<{ token: string; expiresAt: string }> {
   const { privateKey } = await getServerKeys()
   const now = Math.floor(Date.now() / 1000)
   const exp = now + TOKEN_TTL_SECONDS
 
-  const token = await new SignJWT({ handle, claimed })
+  const token = await new SignJWT({ handle, status, name })
     .setProtectedHeader({ alg: 'EdDSA', kid: 'passport-v1' })
     .setIssuer(getIssuer())
     .setSubject(did)
